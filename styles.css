@@ -2,7 +2,6 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #000000;
     margin: 0;
-    padding: 20px;
     display: flex;
     justify-content: center;
     height: 100vh;
@@ -34,6 +33,7 @@ input, select {
     font-size: 14px;
     outline: none;
     transition: border-color 0.3s;
+    text-align: center;
 }
 
 input:focus, select:focus {
@@ -67,19 +67,26 @@ label {
 .row-label {
     font-weight: bold;
     margin-bottom: 10px;
-    color: #007bff;
+    color: yellow;
     font-size: 16px;
 }
 
 .center-text {
     text-align: center;
     font-weight: bold;
-    color: #007bff;
+    color: yellowgreen;
     font-size: 18px;
+}
+hr {
+    border: none;
+    height: 3px;
+    background-color: #f39c12;
+    margin: 5px 0;
 }
 
 #web-name{
-    background: rgb(173, 242, 245);
+    background: rgb(14 26 124 / 42%);
+    border-radius: 50px;
 }
 
 
