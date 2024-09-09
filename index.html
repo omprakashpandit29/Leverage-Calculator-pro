@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Futures Trading Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="error-message" style="display: none; color: red;"></div>
+        <div id="web-name" class="center-text">
+            <p class="col">Binance Future trade</p>
+        </div>
+
+        <!-- 1st Row -->
+        <div class="row">
+            <div class="col row-label">
+                <label for="tradeType">Trade Side</label>
+                <select id="tradeType">
+                    <option value="LONG" selected>LONG</option>
+                    <option value="SHORT">SHORT</option>
+                </select>
+            </div>
+            <div class="col row-label">
+                <label for="leverage">Leverage</label>
+                <input type="number" id="leverage" placeholder="Leverage" required>
+            </div>
+            <div class="col row-label">
+                <label for="totalSize">Total Size</label>
+                <input type="number" id="totalSize" placeholder="Total Size" required>
+            </div>
+            <div class="col row-label">
+                <label for="tpCount">No. of TP</label>
+                <select id="tpCount">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <div class="col row-label">
+                <label for="entryPrice">Entry Price</label>
+                <input type="number" id="entryPrice" placeholder="Entry Price" required>
+            </div>
+            <div class="col row-label">
+                <label for="stopLoss">Stop Loss</label>
+                <input type="number" id="stopLoss" placeholder="Stop Loss" required>
+            </div>
+        </div>
+
+        <!-- Dynamic Rows (3rd to 7th Rows) -->
+        <div id="dynamicRows">
+            <label class="row-label">Enter your TP prices:</label>
+            <div class="row tp-row" id="tpPrices"></div><hr>
+            
+            <label class="row-label">Sell % at each TP:</label>
+            <div class="row tp-row" id="sellPercent"></div><hr>
+            
+            <label class="row-label">Total position closed at each TP:</label>
+            <div class="row tp-row" id="positionClosed"></div>
+            
+            <label class="row-label">P/L at each TP:</label>
+            <div class="row tp-row" id="pl"></div>
+            
+            <label class="row-label">R:R at each TP:</label>
+            <div class="row tp-row" id="rr"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="center-text">
+            <div id="trade-info">You have used ? in this Trade.</div><hr>
+            <div id="totalPL">Total Profit: NaN</div><hr>
+            <div id="totalLoss">Total Loss (If SL hit): NaN</div><hr>
+            <div id="averageRR">Average R:R ratio is 1 : NaN</div><hr>
+        </div>      
+
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
