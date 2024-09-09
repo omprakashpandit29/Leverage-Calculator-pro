@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tpPriceCol.className = 'col';
             const tpPriceInput = document.createElement('input');
             tpPriceInput.type = 'number';
-            tpPriceInput.step = '0.000001'; // Set step to handle 6 decimal places
+            tpPriceInput.step = '0.000001';
             tpPriceInput.required = true;
             tpPriceInput.min = "0";
             tpPriceInput.placeholder = `TP ${i + 1} Price`;
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sellPercentCol.className = 'col';
             const sellPercentInput = document.createElement('input');
             sellPercentInput.type = 'number';
-            sellPercentInput.step = '1'; // Set step to handle 6 decimal places
+            sellPercentInput.step = '1';
             sellPercentInput.required = true;
             sellPercentInput.value = defaultSellPercentages[tpCount][i];
             sellPercentInput.min = "0";
@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateResults();
     }
 
+
     function handleTPAdjustments() {
         calculateResults();
     }
@@ -103,17 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const entryPrice = parseFloat(entryPriceInput.value) || 0;
         const tpInput = event.target;  // The specific TP input that triggered the event
         const tpPrice = parseFloat(tpInput.value) || 0;
-
-        if (tpPrice <= entryPrice) {
-            tpInput.style.borderColor = 'red'; // Highlight invalid input
-            showErrorMessage('All TP Prices must be greater than Entry Price.');
-        } else {
-            tpInput.style.borderColor = ''; // Reset border color
-            hideErrorMessage();
+        const tradeType = tradeTypeSelect.value; // Get the trade type (LONG or SHORT)
+    
+        if (tradeType === 'LONG') {
+            if (tpPrice <= entryPrice) {
+                tpInput.style.borderColor = 'red';
+                showErrorMessage('All TP Prices must be greater than Entry Price.');
+            } else {
+                tpInput.style.borderColor = ''; // Reset border color
+                hideErrorMessage();
+            }
+        } else if (tradeType === 'SHORT') {
+            if (tpPrice >= entryPrice) {
+                tpInput.style.borderColor = 'red';
+                showErrorMessage('All TP Prices must be less than Entry Price.');
+            } else {
+                tpInput.style.borderColor = ''; // Reset border color
+                hideErrorMessage();
+            }
         }
-
-        calculateResults();
-    }
+    
+        calculateResults(); // Trigger result calculation
+    }    
 
     function formatToSixDecimals(event) {
         const input = event.target;
@@ -126,25 +138,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateFields() {
         const entryPrice = parseFloat(entryPriceInput.value) || 0;
         const stopLoss = parseFloat(stopLossInput.value) || 0;
-
+        const tradeType = tradeTypeSelect.value; // Get the trade type (LONG or SHORT)
+    
         let isValid = true;
-
-        // Validate Entry Price vs Stop Loss only if both fields have values
+        
         if (entryPrice > 0 && stopLoss > 0) {
-            if (entryPrice <= stopLoss) {
-                showErrorMessage('Entry Price must be greater than Stop Loss.');
-                isValid = false;
-            } else {
-                hideErrorMessage();
+            if (tradeType === 'LONG') {
+                if (entryPrice <= stopLoss) {
+                    showErrorMessage('Entry Price must be greater than Stop Loss for LONG trades.');
+                    isValid = false;
+                } else {
+                    hideErrorMessage();
+                }
+            } else if (tradeType === 'SHORT') {
+                if (entryPrice >= stopLoss) {
+                    showErrorMessage('Entry Price must be less than Stop Loss for SHORT trades.');
+                    isValid = false;
+                } else {
+                    hideErrorMessage();
+                }
             }
         }
-
+    
         if (!isValid) {
-            showErrorMessage('Please correct the highlighted errors.');
+            showErrorMessage('Please enter a valid Stop Loss.');
         } else {
             hideErrorMessage();
         }
-    }
+    }    
 
     function calculatePositionClosed() {
         const leverage = parseFloat(leverageInput.value) || 0;
@@ -190,21 +211,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalSize = parseFloat(totalSizeInput.value) || 0;
         const entryPrice = parseFloat(entryPriceInput.value) || 0;
         const stopLoss = parseFloat(stopLossInput.value) || 0;
+        const tradeType = tradeTypeSelect.value; // Get the trade type (LONG or SHORT)
     
         // Only calculate if all values are greater than 0
         if (totalSize > 0 && entryPrice > 0 && stopLoss > 0) {
-            const totalLoss = (totalSize / entryPrice) * (entryPrice - stopLoss);
+            let totalLoss;
+    
+            if (tradeType === 'LONG') {
+                // For LONG trade
+                totalLoss = (totalSize / entryPrice) * (entryPrice - stopLoss);
+            } else if (tradeType === 'SHORT') {
+                // For SHORT trade
+                totalLoss = (totalSize / stopLoss) * (stopLoss - entryPrice);
+            }
+    
             totalLossDiv.innerText = `Total Loss (If SL hit): ${totalLoss.toFixed(2)}`;
         } else {
             totalLossDiv.innerText = 'Total Loss (If SL hit): NaN';
         }
-    }
+    }    
     
     // Add event listeners to the input fields to trigger the calculation
     totalSizeInput.addEventListener('input', updateTotalLoss);
     entryPriceInput.addEventListener('input', updateTotalLoss);
     stopLossInput.addEventListener('input', updateTotalLoss);
     
+    function removeTrailingZeros(numberStr) {
+        return numberStr.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); // Remove unnecessary decimal points
+    }
 
     function calculateResults() {
         const tradeType = tradeTypeSelect.value;
@@ -254,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rrAtTp = (priceDiff / risk).toFixed(2);
 
             plInputs[index].value = plAtTp;
-            rrInputs[index].value = `1 : ${rrAtTp}`;
+            rrInputs[index].value = `1 : ${removeTrailingZeros(rrAtTp)}`;
 
             totalPL += parseFloat(plAtTp);
             totalRR += parseFloat(rrAtTp);
@@ -263,8 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const averageRR = (totalRR / tpInputs.length).toFixed(2);
 
         // Update the total P/L and Average R:R ratio in the UI
-        document.getElementById('totalPL').innerText = `Total Profit/Loss: ${totalPL.toFixed(2)}`;
-        document.getElementById('averageRR').innerText = `Average R:R ratio is 1: ${averageRR}`;
+        document.getElementById('totalPL').innerText = `Total Profit: ${totalPL.toFixed(2)}`;
+        document.getElementById('averageRR').innerText = `Average R:R ratio is 1 : ${removeTrailingZeros(averageRR)}`;
     }
 
     function showErrorMessage(message) {
