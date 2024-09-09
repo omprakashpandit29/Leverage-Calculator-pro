@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const leverageInput = document.getElementById('leverage');
     const entryPriceInput = document.getElementById('entryPrice');
     const totalSizeInput = document.getElementById('totalSize');
+    const tradeInfo = document.getElementById('trade-info');
     const stopLossInput = document.getElementById('stopLoss');
+    const totalLossDiv = document.getElementById('totalLoss');
     const tradeTypeSelect = document.getElementById('tradeType');
     const errorMessage = document.getElementById('error-message');
 
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sellPercentCol.className = 'col';
             const sellPercentInput = document.createElement('input');
             sellPercentInput.type = 'number';
-            sellPercentInput.step = '0.000001'; // Set step to handle 6 decimal places
+            sellPercentInput.step = '1'; // Set step to handle 6 decimal places
             sellPercentInput.required = true;
             sellPercentInput.value = defaultSellPercentages[tpCount][i];
             sellPercentInput.min = "0";
@@ -162,11 +164,46 @@ document.addEventListener('DOMContentLoaded', () => {
             cumulativePositionClosed -= parseFloat(positionClosed); // Update cumulative position closed
             positionClosedRow.children[index].querySelector('input').value = positionClosed;
         });
-    
-        // Update the "You have used ?" message dynamically
-        // document.getElementById('usedSizeMessage').innerText = `You have used ${totalSize / leverage} in this Trade.`;
-        updateTradeInfo();
+        
+        function updateTradeInfo() {
+            const leverage = parseFloat(leverageInput.value) || 0;
+            const totalSize = parseFloat(totalSizeInput.value) || 0;
+        
+            // Calculate the value to display
+            const result = totalSize / leverage;
+        
+            // Update the text dynamically
+            if (leverage === 0 || totalSize === 0) {
+                tradeInfo.innerText = 'You have used ? in this Trade.';
+            } else {
+                tradeInfo.innerText = `You have used ${result.toFixed(2)} in this Trade.`;
+            }
+        }
+        
+        // Add event listeners to the input fields
+        leverageInput.addEventListener('input', updateTradeInfo);
+        totalSizeInput.addEventListener('input', updateTradeInfo);
     }
+
+
+    function updateTotalLoss() {
+        const totalSize = parseFloat(totalSizeInput.value) || 0;
+        const entryPrice = parseFloat(entryPriceInput.value) || 0;
+        const stopLoss = parseFloat(stopLossInput.value) || 0;
+    
+        // Only calculate if all values are greater than 0
+        if (totalSize > 0 && entryPrice > 0 && stopLoss > 0) {
+            const totalLoss = (totalSize / entryPrice) * (entryPrice - stopLoss);
+            totalLossDiv.innerText = `Total Loss (If SL hit): ${totalLoss.toFixed(2)}`;
+        } else {
+            totalLossDiv.innerText = 'Total Loss (If SL hit): NaN';
+        }
+    }
+    
+    // Add event listeners to the input fields to trigger the calculation
+    totalSizeInput.addEventListener('input', updateTotalLoss);
+    entryPriceInput.addEventListener('input', updateTotalLoss);
+    stopLossInput.addEventListener('input', updateTotalLoss);
     
 
     function calculateResults() {
