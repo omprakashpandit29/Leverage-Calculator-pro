@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rrAtTp = (priceDiff / risk).toFixed(2);
 
             plInputs[index].value = plAtTp;
-            rrInputs[index].value = rrAtTp;
+            rrInputs[index].value = `1 : ${rrAtTp}`;
 
             totalPL += parseFloat(plAtTp);
             totalRR += parseFloat(rrAtTp);
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update the total P/L and Average R:R ratio in the UI
         document.getElementById('totalPL').innerText = `Total Profit/Loss: ${totalPL.toFixed(2)}`;
-        document.getElementById('averageRR').innerText = `Average R:R ratio: ${averageRR}`;
+        document.getElementById('averageRR').innerText = `Average R:R ratio is 1: ${averageRR}`;
     }
 
     function showErrorMessage(message) {
