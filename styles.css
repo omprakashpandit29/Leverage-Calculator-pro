@@ -4,7 +4,7 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    height: 100vh;
+    
 }
 
 .container {
@@ -77,6 +77,7 @@ label {
     color: yellowgreen;
     font-size: 18px;
 }
+
 hr {
     border: none;
     height: 3px;
@@ -88,7 +89,6 @@ hr {
     background: rgb(14 26 124 / 42%);
     border-radius: 50px;
 }
-
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
@@ -159,4 +159,27 @@ hr {
         gap: 3px;
         margin-bottom: 10px;
     }
+}
+
+#screenshotButton {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background-color: yellow;
+    border: none;
+    padding: 15px 15px;
+    cursor: pointer;
+    border-radius: 50px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    
+}
+
+img#buttonImage{
+    max-height: 20px;
+}
+
+#screenshotButton:hover {
+    background-color: rgb(14 26 124 / 42%);
 }
