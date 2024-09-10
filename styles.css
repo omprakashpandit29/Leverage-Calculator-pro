@@ -1,10 +1,24 @@
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #000000;
     margin: 0;
     display: flex;
     justify-content: center;
-    
+    position: relative; 
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('image/back.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: brightness(50%) contrast(85%);  /* Apply the filter here */
+    z-index: -1;  /* Ensure it stays behind all other content */
 }
 
 .container {
@@ -93,6 +107,11 @@ hr {
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
 
+    body::before {
+        background-image: url('image/phoneback.png');
+        position: fixed;
+    }
+    
     .row {
         display: flex;
         flex-direction: column;
